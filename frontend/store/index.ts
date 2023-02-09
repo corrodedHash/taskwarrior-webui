@@ -63,6 +63,17 @@ export const actions: ActionTree<RootState, RootState> = {
 		context.commit('setTasks', tasks);
 	},
 
+	mockTasks(context){
+		console.log('mocking')
+		const mockings:Task[] = [
+			{id: 12,description:"test", project:"hihi",status:'pending', urgency: 20},
+			{id: 13,description:"second test", project:"hihi",status:'pending', urgency: 17},
+		]
+
+		context.commit('setTasks', mockings)
+	},
+
+
 	async deleteTasks(context, tasks: Task[]) {
 		await this.$axios.$delete('/api/tasks', {
 			params: { tasks: tasks.map(task => task.uuid) }

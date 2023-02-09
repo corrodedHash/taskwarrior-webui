@@ -312,7 +312,9 @@ export default defineComponent({
 		const classifiedTasks = reactive(tempTasks);
 
 		const refresh = () => {
-			store.dispatch('fetchTasks');
+			// store.dispatch('fetchTasks');
+			console.log('refreshing')
+			store.dispatch('mockTasks');
 		};
 
 		const showConfirmationDialog = ref(false);

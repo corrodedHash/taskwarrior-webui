@@ -104,6 +104,7 @@ export default defineComponent({
 		});
 
 		const tasks: ComputedRef<Task[]> = computed(() => {
+			console.log(store.state.tasks)
 			if (mode.value === 'Tasks')
 				return store.state.tasks;
 
