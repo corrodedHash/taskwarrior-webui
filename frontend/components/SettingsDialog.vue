@@ -4,52 +4,57 @@
       <v-card-title> Settings </v-card-title>
       <v-card-text>
         <v-form ref="formRef">
-          <v-list-item>
-            <v-list-item-title> Dark </v-list-item-title>
-            <v-list-item-subtitle> default theme </v-list-item-subtitle>
-            <v-list-item-action>
-              <v-checkbox v-model="settings.dark" />
-            </v-list-item-action>
-          </v-list-item>
+          <v-list>
+            <v-list-item>
+              <template #prepend="{ isActive }">
+                <v-list-item-action start>
+                  <v-checkbox v-model="settings.dark" />
+                </v-list-item-action>
+              </template>
 
-          <v-list-item>
-            <v-list-item-title> Auto Refresh </v-list-item-title>
-            <v-list-item-subtitle>
-              in minutes (0 means no refresh)
-            </v-list-item-subtitle>
-            <v-list-item-action>
-              <v-text-field
-                v-model="settings.autoRefresh"
-                style="width: 40px"
-                :rules="numberRules"
-              />
-            </v-list-item-action>
-          </v-list-item>
+              <v-list-item-title> Dark </v-list-item-title>
+              <v-list-item-subtitle> default theme </v-list-item-subtitle>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title class="pb-1">
-              Auto Sync
-              <v-icon
-                size="18px"
-                class="ml-2"
-                title="Sync immediately"
-                @click="sync"
-              >
-                mdi-sync
-              </v-icon>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              in minutes (0 means no auto sync)<br />
-              run <code>task sync</code> periodically
-            </v-list-item-subtitle>
-            <v-list-item-action>
-              <v-text-field
-                v-model="settings.autoSync"
-                style="width: 40px"
-                :rules="numberRules"
-              />
-            </v-list-item-action>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title> Auto Refresh </v-list-item-title>
+              <v-list-item-subtitle>
+                in minutes (0 means no refresh)
+              </v-list-item-subtitle>
+              <v-list-item-action>
+                <v-text-field
+                  v-model="settings.autoRefresh"
+                  style="width: 40px"
+                  :rules="numberRules"
+                />
+              </v-list-item-action>
+            </v-list-item>
+
+            <v-list-item>
+              <v-list-item-title class="pb-1">
+                Auto Sync
+                <v-icon
+                  size="18px"
+                  class="ml-2"
+                  title="Sync immediately"
+                  @click="sync"
+                >
+                  mdi-sync
+                </v-icon>
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                in minutes (0 means no auto sync)<br />
+                run <code>task sync</code> periodically
+              </v-list-item-subtitle>
+              <v-list-item-action>
+                <v-text-field
+                  v-model="settings.autoSync"
+                  style="width: 40px"
+                  :rules="numberRules"
+                />
+              </v-list-item-action>
+            </v-list-item>
+          </v-list>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -95,6 +100,15 @@ const reset = () => {
   settings.autoRefresh = settingsStore.settings.autoRefresh;
   settings.autoSync = settingsStore.settings.autoSync;
 };
+
+watch(
+  () => props.modelValue,
+  (v) => {
+    if (v) {
+      reset();
+    }
+  }
+);
 
 const closeDialog = () => {
   showDialog.value = false;

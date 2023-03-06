@@ -21,10 +21,6 @@
             </template>
 
             <v-list-item-title>{{ c.title }}</v-list-item-title>
-            <!-- 
-        <v-list-item-subtitle>
-          Automatically add home screen widgets when downloads complete
-        </v-list-item-subtitle> -->
           </v-list-item>
         </v-list>
       </v-card-text>

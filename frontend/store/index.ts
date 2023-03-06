@@ -1,5 +1,6 @@
 import { Task } from "taskwarrior-lib";
 import { defineStore } from "pinia";
+import { useTheme } from "vuetify";
 
 export const useTaskStore = defineStore("tasks", {
   state: () => ({
@@ -44,19 +45,21 @@ export const useTaskStore = defineStore("tasks", {
 });
 
 export const useSettingsStore = defineStore("settings", {
-  state: () => ({
-    snackbar: false,
-    notification: {
-      color: "",
-      text: "",
-    },
-    settings: {
-      dark: false,
-      autoRefresh: "5", // in minutes
-      autoSync: "0", // in minutes
-    },
-    hiddenColumns: [] as string[],
-  }),
+  state: () => {
+    return {
+      snackbar: false,
+      notification: {
+        color: "",
+        text: "",
+      },
+      settings: {
+        dark: false,
+        autoRefresh: "5", // in minutes
+        autoSync: "0", // in minutes
+      },
+      hiddenColumns: [] as string[],
+    };
+  },
   actions: {
     setNotification(notification: typeof this.notification) {
       this.notification = notification;

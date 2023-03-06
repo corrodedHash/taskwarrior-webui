@@ -16,12 +16,12 @@
       </template>
     </v-snackbar>
 
-    <v-app-bar height="54px" fixed app>
+    <v-app-bar fixed app>
       <v-icon class="mr-2" color="blue"> mdi-sticker-check-outline </v-icon>
       <v-toolbar-title> Taskwarrior WebUI </v-toolbar-title>
       <v-spacer />
-      <v-icon class="mr-4" size="28px" title="Theme" @click="dark = !dark">
-        {{ dark ? "mdi-brightness-4" : "mdi-brightness-7" }}
+      <v-icon class="mr-4" size="28px" title="Theme" @click="toggleDark">
+        {{ store.settings.dark ? "mdi-brightness-4" : "mdi-brightness-7" }}
       </v-icon>
       <v-icon
         class="mr-2"
@@ -32,7 +32,6 @@
         mdi-cog
       </v-icon>
     </v-app-bar>
-
     <v-main>
       <v-container fluid>
         <slot />
@@ -44,23 +43,14 @@
 <script setup lang="ts">
 import SettingsDialog from "../components/SettingsDialog.vue";
 import { useSettingsStore } from "~~/store";
-import { useTheme } from "vuetify";
 const store = useSettingsStore();
-
-console.log("Are we in dev?", process.dev);
 
 store.fetchSettings();
 store.fetchHiddenColumns();
 
-const theme = useTheme();
-// context.$vuetify.theme.dark = store.settings.dark;
-
-const dark = computed({
-  get: () => theme.global.current.value.dark,
-  set: (val) => {
-    theme.global.name.value = val ? "dark" : "light";
-  },
-});
+const toggleDark = () => {
+  store.updateSettings({ ...store.settings, dark: !store.settings.dark });
+};
 
 const settingsDialog = ref(false);
 

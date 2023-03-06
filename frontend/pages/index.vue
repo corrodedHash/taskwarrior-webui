@@ -87,6 +87,10 @@ watch(
     setAutoSync();
     setAutoRefresh();
     theme.global.name.value = settingsStore.settings.dark ? "dark" : "light";
+  },
+  {
+    deep: true,
+    immediate: true,
   }
 );
 
