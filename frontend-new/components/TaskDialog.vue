@@ -127,7 +127,7 @@ const props = defineProps<{
   task?: Task;
 }>();
 
-const emits = defineEmits<{ (e: "input", val: boolean): void }>();
+const emits = defineEmits<{ (e: "update:modelValue", val: boolean): void }>();
 const store = useState();
 
 const projects = computed(() => store.projects);
@@ -135,7 +135,7 @@ const tags = computed(() => store.tags);
 
 const showDialog = computed({
   get: () => props.modelValue,
-  set: (val) => emits("input", val),
+  set: (val) => emits("update:modelValue", val),
 });
 
 const requiredRules = [(str: string) => Boolean(str) || "Required"];

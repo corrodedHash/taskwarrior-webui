@@ -77,11 +77,8 @@ export const useState = defineStore("state", {
     },
 
     async deleteTasks(tasks: Task[]) {
-      console.log(tasks);
-      // const query = tasks.map((v) => v.uuid as string).join("&");
-      const query = tasks.map((v) => `tasks[]=${v}`).join("&");
-      // const query = "abc=def";
-      console.log(query);
+      const query = tasks.map((v) => `tasks[]=${v.uuid}`).join("&");
+      console.log(query)
       $fetch(`/api/tasks?${query}`, {
         method: "delete",
       });

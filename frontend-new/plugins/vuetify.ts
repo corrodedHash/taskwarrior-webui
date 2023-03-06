@@ -8,6 +8,12 @@ export default defineNuxtPlugin((nuxtApp) => {
     ssr: true,
     components: { ...components, VDataTable },
     directives,
+    defaults: {
+      VDataTable: {
+        fixedHeader: true,
+        noDataText: "Results not found",
+      },
+    },
   });
 
   nuxtApp.vueApp.use(vuetify);

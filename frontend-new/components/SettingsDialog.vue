@@ -71,11 +71,11 @@ const props = defineProps<{
   modelValue: boolean;
 }>();
 
-const emits = defineEmits<{ (e: "input", val: boolean): void }>();
+const emits = defineEmits<{ (e: "update:modelValue", val: boolean): void }>();
 
 const showDialog = computed({
   get: () => props.modelValue,
-  set: (val) => emits("input", val),
+  set: (val) => emits("update:modelValue", val),
 });
 
 const numberRules = [

@@ -6,12 +6,14 @@ export default defineEventHandler(async (event) => {
   if (!url.startsWith("/api")) {
     return;
   }
-  const modified_url = url.substring("/api".length).split("?")[0];
+  const modified_url = url.substring("/api".length);//.split("?")[0];
   const target = `http://localhost:3000${modified_url}`;
-  console.log(url, modified_url, target, getMethod(event));
-  console.log(getHeaders(event));
-  if (getMethod(event) !== "GET") {
-    console.log(await readBody(event));
+  if (process.dev) {
+    console.log(url, modified_url, target, getMethod(event));
+    console.log(getHeaders(event));
+    if (getMethod(event) !== "GET") {
+      console.log(await readBody(event));
+    }
   }
   try {
     if (getMethod(event) === "DELETE") {
@@ -19,14 +21,13 @@ export default defineEventHandler(async (event) => {
       /// When we delete it, it works
       const headers = getRequestHeaders(event);
       delete headers["content-length"];
-      console.log(headers);
-      await proxyRequest(event, target + "?tasks[]=2", {
+      await proxyRequest(event, target, {
         fetchOptions: {
           headers: headers as unknown as undefined,
         },
       });
     } else {
-      await proxyRequest(event, target + "?tasks[]=2", {});
+      await proxyRequest(event, target , {});
     }
   } catch (e) {
     console.log("Errored with", e);

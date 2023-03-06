@@ -4,10 +4,10 @@
       <v-card-title> Hidden Columns </v-card-title>
       <v-card-text>
         <v-form ref="formRef">
-          <v-list-item v-for="c in props.activeColumns" :key="c.value">
-              <v-list-item-title> {{ c.text }} </v-list-item-title>
+          <v-list-item v-for="c in props.activeColumns" :key="c.key">
+              <v-list-item-title> {{ c.title }} </v-list-item-title>
             <v-list-item-action>
-              <v-checkbox v-model="hiddenColumnsBuffer" :value="c.value" />
+              <v-checkbox v-model="hiddenColumnsBuffer" :value="c.key" />
             </v-list-item-action>
           </v-list-item>
         </v-form>
@@ -20,15 +20,15 @@
 import { useState } from "~~/store";
 const props = defineProps<{
   value?: boolean;
-  activeColumns: { text: string; value: string }[];
+  activeColumns: { title: string; key: string }[];
 }>();
 
 const store = useState();
-const emits = defineEmits<{ (e: "input", value: boolean): void }>();
+const emits = defineEmits<{ (e: "update:modelValue", value: boolean): void }>();
 
 const showDialog = computed({
   get: () => props.value,
-  set: (val) => emits("input", val),
+  set: (val) => emits("update:modelValue", val),
 });
 
 const closeDialog = () => {

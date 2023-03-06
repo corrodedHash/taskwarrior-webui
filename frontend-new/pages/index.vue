@@ -44,6 +44,7 @@
 import TaskList from "../components/TaskList.vue";
 import { Task } from "taskwarrior-lib";
 import { useState } from "~~/store";
+import { useTheme } from "vuetify";
 
 const store = useState();
 store.fetchTasks();
@@ -74,13 +75,15 @@ const setAutoSync = () => {
 };
 setAutoSync();
 
+const theme = useTheme();
+
 // Update settings
 watch(
   () => store.settings,
   () => {
     setAutoSync();
     setAutoRefresh();
-    // context.$vuetify.theme.dark = store.settings.dark;
+    theme.global.name.value = store.settings.dark ? "dark" : "light";
   }
 );
 

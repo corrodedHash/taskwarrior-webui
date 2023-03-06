@@ -44,18 +44,19 @@
 <script setup lang="ts">
 import SettingsDialog from "../components/SettingsDialog.vue";
 import { useState } from "~~/store";
-
+import { useTheme } from "vuetify";
 const store = useState();
 
 store.fetchSettings();
 store.fetchHiddenColumns();
 
+const theme = useTheme();
 // context.$vuetify.theme.dark = store.settings.dark;
 
 const dark = computed({
-  get: () => false,//context.$vuetify.theme.dark,
+  get: () => theme.global.current.value.dark,
   set: (val) => {
-    // context.$vuetify.theme.dark = val;
+    theme.global.name.value = val ? "dark" : "light";
   },
 });
 
@@ -64,7 +65,6 @@ const settingsDialog = ref(false);
 const notification = computed(() => store.notification);
 
 onErrorCaptured((err: any) => {
-  // axios error
   let notification: any;
   if (err?.response) {
     const { status, data } = err.response!;

@@ -19,8 +19,8 @@
             v-for="st in allStatus"
             :key="st"
             :value="st"
-            :color="st === status ? 'primary' : undefined"
             text
+            :color="st === status ? 'primary' : undefined"
             @click="st !== status && (selected = [])"
           >
             <v-icon class="mr-1" :color="st === status ? 'primary' : undefined">
@@ -47,10 +47,11 @@
         :items="classifiedTasks[status]"
         :headers="filteredHeaders"
         show-select
-        item-key="uuid"
+        item-value="uuid"
         :item-class="rowClass"
         v-model="selected"
         class="elevation-1"
+        density="compact"
         style="width: 100%"
       >
         <template v-slot:top>
@@ -130,30 +131,30 @@
         </template>
 
         <template v-slot:item.description="{ item }">
-          <span v-html="linkify(item.description)" />
+          <span v-html="linkify(item.raw.description)" />
         </template>
 
         <template v-if="status === 'waiting'" v-slot:item.wait="{ item }">
-          {{ displayDate(item.wait) }}
+          {{ displayDate(item.raw.wait) }}
         </template>
         <template v-slot:item.scheduled="{ item }">
-          {{ displayDate(item.scheduled) }}
+          {{ displayDate(item.raw.scheduled) }}
         </template>
         <template v-slot:item.due="{ item }">
-          {{ displayDate(item.due) }}
+          {{ displayDate(item.raw.due) }}
         </template>
         <template v-slot:item.until="{ item }">
-          {{ displayDate(item.until) }}
+          {{ displayDate(item.raw.until) }}
         </template>
 
         <template v-slot:item.tags="{ item }">
-          <v-chip v-for="tag in item.tags" :key="tag" small>
+          <v-chip v-for="tag in item.raw.tags" :key="tag" small>
             {{ tag }}
           </v-chip>
         </template>
 
         <template v-slot:item.urgency="{ item }">
-          {{ item.urgency }}
+          {{ item.raw.urgency }}
         </template>
 
         <template v-slot:item.actions="{ item }">
@@ -161,7 +162,7 @@
             v-show="status === 'pending'"
             size="20px"
             class="ml-2"
-            @click="completeTasks([item])"
+            @click="completeTasks([item.raw])"
             title="Done"
           >
             mdi-check
@@ -170,19 +171,19 @@
             v-show="status === 'completed' || status === 'deleted'"
             size="20px"
             class="ml-2"
-            @click="restoreTasks([item])"
+            @click="restoreTasks([item.raw])"
             title="Restore"
           >
             mdi-restore
           </v-icon>
-          <v-icon class="ml-2" size="20px" @click="editTask(item)" title="Edit">
+          <v-icon class="ml-2" size="20px" @click="editTask(item.raw)" title="Edit">
             mdi-pencil
           </v-icon>
           <v-icon
             v-show="status !== 'deleted'"
             class="ml-2"
             size="20px"
-            @click="deleteTasks([item])"
+            @click="deleteTasks([item.raw])"
             title="Delete"
           >
             mdi-delete
@@ -240,7 +241,10 @@ function futureDate(str?: string) {
   return date.isAfter(moment());
 }
 
-function linkify(text: string) {
+function linkify(text: string | undefined) {
+  if (text === undefined) {
+    return "";
+  }
   const regex = urlRegex();
 
   let match;
@@ -273,26 +277,26 @@ const statusIcons: { [st: string]: string } = {
   recurring: "mdi-restart",
 };
 const headers = computed(() => [
-  { text: "Project", value: "project" },
-  { text: "Description", value: "description" },
-  { text: "Priority", value: "priority" },
-  { text: "Scheduled", value: "scheduled" },
-  ...(status.value === "recurring" ? [{ text: "Recur", value: "recur" }] : []),
+  { title: "Project", key: "project" },
+  { title: "Description", key: "description" },
+  { title: "Priority", key: "priority" },
+  { title: "Scheduled", key: "scheduled" },
+  ...(status.value === "recurring" ? [{ title: "Recur", key: "recur" }] : []),
   ...(status.value !== "waiting"
-    ? [{ text: "Due", value: "due" }]
-    : [{ text: "Wait", value: "wait" }]),
-  { text: "Until", value: "until" },
-  { text: "Tags", value: "tags" },
+    ? [{ title: "Due", key: "due" }]
+    : [{ title: "Wait", key: "wait" }]),
+  { title: "Until", key: "until" },
+  { title: "Tags", key: "tags" },
   {
-    text: "Urgency",
-    value: "urgency",
+    title: "Urgency",
+    key: "urgency",
     sort: (a: number, b: number) => !(a > b),
   },
-  { text: "Actions", value: "actions", sortable: false },
+  { title: "Actions", key: "actions", sortable: false },
 ]);
 
 const filteredHeaders = computed(() =>
-  headers.value.filter((v) => !store.hiddenColumns.includes(v.value))
+  headers.value.filter((v) => !store.hiddenColumns.includes(v.key))
 );
 
 const showColumnDialog = ref(false);

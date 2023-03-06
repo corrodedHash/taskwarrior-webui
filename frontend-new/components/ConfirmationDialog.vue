@@ -25,12 +25,12 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: "no"): void;
   (e: "yes"): void;
-  (e: "input", val: boolean): void;
+  (e: "update:modelValue", val: boolean): void;
 }>();
 
 const showDialog = computed({
   get: () => props.value,
-  set: (val) => emits("input", val),
+  set: (val) => emits("update:modelValue", val),
 });
 
 const handler = (event: "yes" | "no") => {
