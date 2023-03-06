@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   if (!url.startsWith("/api")) {
     return;
   }
-  const modified_url = url.substring("/api".length);//.split("?")[0];
+  const modified_url = url.substring("/api".length); //.split("?")[0];
   const target = `http://localhost:3000${modified_url}`;
   if (process.dev) {
     console.log(url, modified_url, target, getMethod(event));
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
         },
       });
     } else {
-      await proxyRequest(event, target , {});
+      await proxyRequest(event, target, {});
     }
   } catch (e) {
     console.log("Errored with", e);

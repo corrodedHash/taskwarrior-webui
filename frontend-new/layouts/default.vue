@@ -9,7 +9,7 @@
     >
       {{ notification.text }}
 
-      <template v-slot:action="{ attrs }">
+      <template #action="{ attrs }">
         <v-btn dark text v-bind="attrs" @click="store.snackbar = false">
           Close
         </v-btn>
@@ -20,7 +20,7 @@
       <v-icon class="mr-2" color="blue"> mdi-sticker-check-outline </v-icon>
       <v-toolbar-title> Taskwarrior WebUI </v-toolbar-title>
       <v-spacer />
-      <v-icon class="mr-4" size="28px" @click="dark = !dark" title="Theme">
+      <v-icon class="mr-4" size="28px" title="Theme" @click="dark = !dark">
         {{ dark ? "mdi-brightness-4" : "mdi-brightness-7" }}
       </v-icon>
       <v-icon

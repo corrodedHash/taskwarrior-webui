@@ -12,8 +12,8 @@
       <v-card-text>
         <v-form ref="formRef" lazy-validation>
           <v-text-field
-            autofocus
             v-model="formData.description"
+            autofocus
             label="Description*"
             :rules="requiredRules"
             required
@@ -35,8 +35,8 @@
           />
           <v-row class="px-3">
             <v-text-field
-              class="mr-3"
               v-model="formData.due"
+              class="mr-3"
               :label="recur ? 'Due*' : 'Due'"
               :rules="recur ? requiredRules : []"
               :required="recur"
@@ -45,8 +45,8 @@
           </v-row>
           <v-row class="px-3">
             <v-text-field
-              class="mr-3"
               v-model="formData.scheduled"
+              class="mr-3"
               label="Scheduled"
             />
             <v-text-field v-model="formData.wait" label="Wait" />
@@ -54,8 +54,8 @@
           <v-row class="px-3">
             <v-checkbox v-model="recur" class="mr-3" label="Recur" />
             <v-text-field
-              label="period*"
               v-model="formData.recur"
+              label="period*"
               :rules="recur ? requiredRules : []"
               :required="recur"
               :disabled="!recur"
@@ -67,7 +67,7 @@
             hide-details
             class="align-center"
           >
-            <template v-slot:prepend>
+            <template #prepend>
               <span class="mr-3 subtitle-1"> Priority </span>
             </template>
             <v-radio
@@ -82,8 +82,8 @@
             <v-list-subheader>Annotations</v-list-subheader>
             <v-list-item>
               <v-text-field
-                placeholder="Annotation text"
                 v-model="addAnnotationDescription"
+                placeholder="Annotation text"
               />
               <v-list-item-action>
                 <v-btn
@@ -99,11 +99,10 @@
               </v-list-item-action>
             </v-list-item>
             <v-list-item v-for="a in formData.annotations" :key="a.entry">
-              <v-list-item-title
-                v-text="a.description"
-                class="text-wrap"
-              ></v-list-item-title>
-              <v-list-item-subtitle v-text="a.entry"></v-list-item-subtitle>
+              <v-list-item-title class="text-wrap">
+                {{ a.description }}
+              </v-list-item-title>
+              <v-list-item-subtitle>{{ a.entry }}</v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-form>
@@ -111,9 +110,9 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn text @click="closeDialog" width="80px"> Cancel </v-btn>
-        <v-btn @click="reset" width="80px"> Reset </v-btn>
-        <v-btn color="primary" @click="submit" width="80px"> Submit </v-btn>
+        <v-btn text width="80px" @click="closeDialog"> Cancel </v-btn>
+        <v-btn width="80px" @click="reset"> Reset </v-btn>
+        <v-btn color="primary" width="80px" @click="submit"> Submit </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

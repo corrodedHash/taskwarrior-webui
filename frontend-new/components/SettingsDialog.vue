@@ -32,8 +32,8 @@
               <v-icon
                 size="18px"
                 class="ml-2"
-                @click="sync"
                 title="Sync immediately"
+                @click="sync"
               >
                 mdi-sync
               </v-icon>

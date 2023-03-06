@@ -1,15 +1,17 @@
 <template>
   <div class="px-md-6 px-lg-12">
     <v-row class="px-4 pt-4">
-      <div class="headline d-flex align-center">{{ mode }}</div>
+      <div class="headline d-flex align-center">
+        {{ mode }}
+      </div>
       <template v-if="mode === 'Projects'">
         <v-icon class="mx-2"> mdi-chevron-right </v-icon>
 
         <v-select
+          v-model="project"
           class="mb-3"
           :items="projects"
           label="Project"
-          v-model="project"
           style="max-width: 120px"
           hide-details
         />
@@ -27,10 +29,10 @@
 
       <v-spacer />
       <v-select
+        v-model="mode"
         class="mb-3 ml-3"
         :items="allModes"
         label="Display Mode"
-        v-model="mode"
         style="max-width: 120px"
         hide-details
       />

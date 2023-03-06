@@ -44,20 +44,20 @@
 
     <v-row class="px-4 pt-4">
       <v-data-table
+        v-model="selected"
         :items="classifiedTasks[status]"
         :headers="filteredHeaders"
         show-select
         item-value="uuid"
         :item-class="rowClass"
-        v-model="selected"
         class="elevation-1"
         density="compact"
         style="width: 100%"
       >
-        <template v-slot:top>
+        <template #top>
           <v-row class="px-4">
             <!-- Batch actions -->
-            <div class="pl-2 pt-2" v-show="selected.length">
+            <div v-show="selected.length" class="pl-2 pt-2">
               <v-btn
                 v-show="status === 'pending'"
                 class="ma-1 green"
@@ -130,40 +130,42 @@
           </v-row>
         </template>
 
-        <template v-slot:item.description="{ item }">
+        <template #item.description="{ item }">
+          <!-- eslint-disable vue/no-v-html -->
           <span v-html="linkify(item.raw.description)" />
+          <!--eslint-enable-->
         </template>
 
-        <template v-if="status === 'waiting'" v-slot:item.wait="{ item }">
+        <template v-if="status === 'waiting'" #item.wait="{ item }">
           {{ displayDate(item.raw.wait) }}
         </template>
-        <template v-slot:item.scheduled="{ item }">
+        <template #item.scheduled="{ item }">
           {{ displayDate(item.raw.scheduled) }}
         </template>
-        <template v-slot:item.due="{ item }">
+        <template #item.due="{ item }">
           {{ displayDate(item.raw.due) }}
         </template>
-        <template v-slot:item.until="{ item }">
+        <template #item.until="{ item }">
           {{ displayDate(item.raw.until) }}
         </template>
 
-        <template v-slot:item.tags="{ item }">
+        <template #item.tags="{ item }">
           <v-chip v-for="tag in item.raw.tags" :key="tag" small>
             {{ tag }}
           </v-chip>
         </template>
 
-        <template v-slot:item.urgency="{ item }">
+        <template #item.urgency="{ item }">
           {{ item.raw.urgency }}
         </template>
 
-        <template v-slot:item.actions="{ item }">
+        <template #item.actions="{ item }">
           <v-icon
             v-show="status === 'pending'"
             size="20px"
             class="ml-2"
-            @click="completeTasks([item.raw.uuid])"
             title="Done"
+            @click="completeTasks([item.raw.uuid])"
           >
             mdi-check
           </v-icon>
@@ -171,16 +173,16 @@
             v-show="status === 'completed' || status === 'deleted'"
             size="20px"
             class="ml-2"
-            @click="restoreTasks([item.raw.uuid])"
             title="Restore"
+            @click="restoreTasks([item.raw.uuid])"
           >
             mdi-restore
           </v-icon>
           <v-icon
             class="ml-2"
             size="20px"
-            @click="editTask(item.raw)"
             title="Edit"
+            @click="editTask(item.raw)"
           >
             mdi-pencil
           </v-icon>
@@ -188,8 +190,8 @@
             v-show="status !== 'deleted'"
             class="ml-2"
             size="20px"
-            @click="deleteTasks([item.raw.uuid])"
             title="Delete"
+            @click="deleteTasks([item.raw.uuid])"
           >
             mdi-delete
           </v-icon>
@@ -318,10 +320,6 @@ for (const status of allStatus) {
         return (
           task.status === "pending" &&
           (status === "pending" ? !waiting : waiting)
-        );
-      } else if (status === "pending") {
-        return (
-          task.status === "pending" && !(task.wait && !expiredDate(task.wait))
         );
       } else {
         return task.status === status;

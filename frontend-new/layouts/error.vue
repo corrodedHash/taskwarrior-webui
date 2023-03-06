@@ -13,10 +13,10 @@
 <script setup lang="ts">
 import { NuxtError } from "#app";
 
-const message_dict = {
-  pageNotFound: "404 Not Found",
-  otherError: "An error occurred",
-};
+// const message_dict = {
+//   pageNotFound: "404 Not Found",
+//   otherError: "An error occurred",
+// };
 
 const props = defineProps<{
   error: NuxtError;

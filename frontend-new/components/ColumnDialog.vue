@@ -4,19 +4,19 @@
       <v-card-title> Hidden Columns </v-card-title>
       <v-card-text>
         <v-list
+          v-model:selected="hiddenColumnsBuffer"
           lines="one"
           density="compact"
           select-strategy="classic"
-          v-model:selected="hiddenColumnsBuffer"
         >
           <v-list-item
             v-for="c in props.activeColumns"
             :key="c.key"
             :value="c.key"
           >
-            <template v-slot:append="{ isActive }">
+            <template #append="{ isActive }">
               <v-list-item-action end>
-                <v-checkbox-btn :model-value="isActive"></v-checkbox-btn>
+                <v-checkbox-btn :model-value="isActive" />
               </v-list-item-action>
             </template>
 
@@ -34,7 +34,6 @@
 
 <script setup lang="ts">
 import { useSettingsStore } from "~~/store";
-const bla = (penis: any) => console.log(penis);
 const props = defineProps<{
   value?: boolean;
   activeColumns: { title: string; key: string }[];
