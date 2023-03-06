@@ -43,21 +43,22 @@
 <script lang="ts" setup>
 import TaskList from "../components/TaskList.vue";
 import { Task } from "taskwarrior-lib";
-import { useState } from "~~/store";
+import { useSettingsStore, useTaskStore } from "~~/store";
 import { useTheme } from "vuetify";
 
-const store = useState();
-store.fetchTasks();
+const settingsStore = useSettingsStore();
+const taskStore = useTaskStore();
+taskStore.fetchTasks();
 
 // Auto Refresh
 let refreshInterval: NodeJS.Timeout | null = null;
 const setAutoRefresh = () => {
   if (refreshInterval) clearInterval(refreshInterval);
-  const freq = +store.settings.autoRefresh;
+  const freq = +settingsStore.settings.autoRefresh;
   if (freq > 0) {
     refreshInterval = setInterval(() => {
-      store.fetchTasks();
-    }, +store.settings.autoRefresh * 60000);
+      taskStore.fetchTasks();
+    }, +settingsStore.settings.autoRefresh * 60000);
   }
 };
 setAutoRefresh();
@@ -66,11 +67,11 @@ setAutoRefresh();
 let syncInterval: NodeJS.Timeout | null = null;
 const setAutoSync = () => {
   if (syncInterval) clearInterval(syncInterval);
-  const freq = +store.settings.autoSync;
+  const freq = +settingsStore.settings.autoSync;
   if (freq > 0) {
     syncInterval = setInterval(() => {
-      store.syncTasks();
-    }, +store.settings.autoSync * 60000);
+      taskStore.syncTasks();
+    }, +settingsStore.settings.autoSync * 60000);
   }
 };
 setAutoSync();
@@ -79,11 +80,11 @@ const theme = useTheme();
 
 // Update settings
 watch(
-  () => store.settings,
+  () => settingsStore.settings,
   () => {
     setAutoSync();
     setAutoRefresh();
-    theme.global.name.value = store.settings.dark ? "dark" : "light";
+    theme.global.name.value = settingsStore.settings.dark ? "dark" : "light";
   }
 );
 
@@ -91,7 +92,7 @@ const mode = ref("Tasks");
 const allModes = ["Tasks", "Projects"];
 
 const project = ref("");
-const projects: ComputedRef<string[]> = computed(() => store.projects);
+const projects: ComputedRef<string[]> = computed(() => taskStore.projects);
 watch(projects, () => {
   if (projects.value.includes(project.value)) return;
   if (projects.value.length) project.value = projects.value[0];
@@ -99,10 +100,10 @@ watch(projects, () => {
 });
 
 const tasks: ComputedRef<Task[]> = computed(() => {
-  if (mode.value === "Tasks") return store.tasks;
+  if (mode.value === "Tasks") return taskStore.tasks;
 
   if (project.value)
-    return store.tasks.filter((task: Task) => task.project === project.value);
+    return taskStore.tasks.filter((task: Task) => task.project === project.value);
 
   return [];
 });

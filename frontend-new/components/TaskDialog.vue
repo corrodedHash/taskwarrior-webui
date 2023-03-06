@@ -121,17 +121,18 @@
 
 <script setup lang="ts">
 import { Task, TaskPriority } from "taskwarrior-lib";
-import { useState } from "~~/store";
+import { useSettingsStore, useTaskStore } from "~~/store";
 const props = defineProps<{
   modelValue: boolean;
   task?: Task;
 }>();
 
 const emits = defineEmits<{ (e: "update:modelValue", val: boolean): void }>();
-const store = useState();
+const settingsStore = useSettingsStore();
+const taskStore = useTaskStore()
 
-const projects = computed(() => store.projects);
-const tags = computed(() => store.tags);
+const projects = computed(() => taskStore.projects);
+const tags = computed(() => taskStore.tags);
 
 const showDialog = computed({
   get: () => props.modelValue,
@@ -204,7 +205,7 @@ const closeDialog = () => {
 const submit = async () => {
   const valid = (formRef.value as any).validate();
   if (valid) {
-    await store.updateTasks([
+    await taskStore.updateTasks([
       {
         ...formData.value,
         annotations: formData.value.annotations || [],
@@ -220,7 +221,7 @@ const submit = async () => {
         recur: recur.value ? formData.value.recur : undefined,
       },
     ]);
-    store.setNotification({
+    settingsStore.setNotification({
       color: "success",
       text: `Successfully ${props.task ? "update" : "create"} the task`,
     });

@@ -63,9 +63,10 @@
 </template>
 
 <script setup lang="ts">
-import { useState } from "~~/store";
+import { useSettingsStore, useTaskStore } from "~~/store";
 
-const store = useState();
+const settingsStore = useSettingsStore();
+const taskStore = useTaskStore();
 
 const props = defineProps<{
   modelValue: boolean;
@@ -84,15 +85,15 @@ const numberRules = [
 
 const formRef = ref(null);
 const settings = reactive({
-  dark: store.settings.dark,
-  autoRefresh: store.settings.autoRefresh,
-  autoSync: store.settings.autoSync,
+  dark: settingsStore.settings.dark,
+  autoRefresh: settingsStore.settings.autoRefresh,
+  autoSync: settingsStore.settings.autoSync,
 });
 
 const reset = () => {
-  settings.dark = store.settings.dark;
-  settings.autoRefresh = store.settings.autoRefresh;
-  settings.autoSync = store.settings.autoSync;
+  settings.dark = settingsStore.settings.dark;
+  settings.autoRefresh = settingsStore.settings.autoRefresh;
+  settings.autoSync = settingsStore.settings.autoSync;
 };
 
 const closeDialog = () => {
@@ -103,7 +104,7 @@ const closeDialog = () => {
 const save = () => {
   const valid = (formRef as any).value.validate();
   if (valid) {
-    store.updateSettings({
+    settingsStore.updateSettings({
       ...settings,
     });
     closeDialog();
@@ -111,6 +112,6 @@ const save = () => {
 };
 
 const sync = async () => {
-  await store.syncTasks();
+  await taskStore.syncTasks();
 };
 </script>

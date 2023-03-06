@@ -3,27 +3,44 @@
     <v-card>
       <v-card-title> Hidden Columns </v-card-title>
       <v-card-text>
-        <v-form ref="formRef">
-          <v-list-item v-for="c in props.activeColumns" :key="c.key">
-              <v-list-item-title> {{ c.title }} </v-list-item-title>
-            <v-list-item-action>
-              <v-checkbox v-model="hiddenColumnsBuffer" :value="c.key" />
-            </v-list-item-action>
+        <v-list
+          lines="one"
+          density="compact"
+          select-strategy="classic"
+          v-model:selected="hiddenColumnsBuffer"
+        >
+          <v-list-item
+            v-for="c in props.activeColumns"
+            :key="c.key"
+            :value="c.key"
+          >
+            <template v-slot:append="{ isActive }">
+              <v-list-item-action end>
+                <v-checkbox-btn :model-value="isActive"></v-checkbox-btn>
+              </v-list-item-action>
+            </template>
+
+            <v-list-item-title>{{ c.title }}</v-list-item-title>
+            <!-- 
+        <v-list-item-subtitle>
+          Automatically add home screen widgets when downloads complete
+        </v-list-item-subtitle> -->
           </v-list-item>
-        </v-form>
+        </v-list>
       </v-card-text>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { useState } from "~~/store";
+import { useSettingsStore } from "~~/store";
+const bla = (penis: any) => console.log(penis);
 const props = defineProps<{
   value?: boolean;
   activeColumns: { title: string; key: string }[];
 }>();
 
-const store = useState();
+const store = useSettingsStore();
 const emits = defineEmits<{ (e: "update:modelValue", value: boolean): void }>();
 
 const showDialog = computed({

@@ -43,9 +43,9 @@
 
 <script setup lang="ts">
 import SettingsDialog from "../components/SettingsDialog.vue";
-import { useState } from "~~/store";
+import { useSettingsStore } from "~~/store";
 import { useTheme } from "vuetify";
-const store = useState();
+const store = useSettingsStore();
 
 store.fetchSettings();
 store.fetchHiddenColumns();

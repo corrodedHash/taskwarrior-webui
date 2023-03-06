@@ -179,7 +179,7 @@
           <v-icon
             class="ml-2"
             size="20px"
-            @click="editTask(item.raw.uuid)"
+            @click="editTask(item.raw)"
             title="Edit"
           >
             mdi-pencil
@@ -209,9 +209,10 @@ import moment from "moment";
 import urlRegex from "url-regex-safe";
 import normalizeUrl from "normalize-url";
 
-import { useState } from "@/store/index";
+import { useTaskStore, useSettingsStore } from "@/store/index";
 
-const store = useState();
+const taskStore = useTaskStore();
+const settingsStore = useSettingsStore();
 function displayDate(str?: string) {
   if (!str) return str;
 
@@ -301,7 +302,7 @@ const headers = computed(() => [
 ]);
 
 const filteredHeaders = computed(() =>
-  headers.value.filter((v) => !store.hiddenColumns.includes(v.key))
+  headers.value.filter((v) => !settingsStore.hiddenColumns.includes(v.key))
 );
 
 const showColumnDialog = ref(false);
@@ -331,7 +332,7 @@ for (const status of allStatus) {
 const classifiedTasks = reactive(tempTasks);
 
 const refresh = () => {
-  store.fetchTasks();
+  taskStore.fetchTasks();
 };
 
 const showConfirmationDialog = ref(false);
@@ -355,7 +356,7 @@ const editTask = (task: Task) => {
 
 const completeTasks = async (task_ids: string[]) => {
   const tasks = props.tasks.filter((v) => task_ids.includes(v.uuid as string));
-  await store.updateTasks(
+  await taskStore.updateTasks(
     tasks.map((task) => {
       return {
         ...task,
@@ -366,7 +367,7 @@ const completeTasks = async (task_ids: string[]) => {
   selected.value = selected.value.filter(
     (task) => tasks.findIndex((t) => t.uuid === task) === -1
   );
-  store.setNotification({
+  settingsStore.setNotification({
     color: "success",
     text: "Successfully complete the task(s)",
   });
@@ -377,11 +378,11 @@ const deleteTasks = (task_ids: string[]) => {
 
   confirmation.text = "Are you sure to delete the task(s)?";
   confirmation.handler = async () => {
-    await store.deleteTasks(tasks);
+    await taskStore.deleteTasks(tasks);
     selected.value = selected.value.filter(
       (task) => tasks.findIndex((t) => t.uuid === task) === -1
     );
-    store.setNotification({
+    settingsStore.setNotification({
       color: "success",
       text: "Successfully delete the task(s)",
     });
@@ -394,7 +395,7 @@ const restoreTasks = (task_ids: string[]) => {
 
   confirmation.text = "Are you sure to restore the task(s)?";
   confirmation.handler = async () => {
-    await store.updateTasks(
+    await taskStore.updateTasks(
       tasks.map((task) => {
         return {
           ...task,
@@ -405,7 +406,7 @@ const restoreTasks = (task_ids: string[]) => {
     selected.value = selected.value.filter(
       (task) => tasks.findIndex((t) => t.uuid === task) === -1
     );
-    store.setNotification({
+    settingsStore.setNotification({
       color: "success",
       text: "Successfully restore the task(s)",
     });

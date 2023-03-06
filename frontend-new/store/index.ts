@@ -1,9 +1,50 @@
 import { Task } from "taskwarrior-lib";
 import { defineStore } from "pinia";
 
-export const useState = defineStore("state", {
+export const useTaskStore = defineStore("tasks", {
   state: () => ({
     tasks: [] as Task[],
+  }),
+  actions: {
+    async fetchTasks() {
+      const tasks: Task[] = await $fetch("/api/tasks?hihi=1");
+      this.tasks = tasks;
+    },
+
+    async deleteTasks(tasks: Task[]) {
+      const query = tasks.map((v) => `tasks[]=${v.uuid}`).join("&");
+      console.log(query);
+      $fetch(`/api/tasks?${query}`, {
+        method: "delete",
+      });
+      // Refresh
+      await this.fetchTasks();
+    },
+
+    async updateTasks(tasks: Task[]) {
+      await $fetch("/api/tasks", { method: "put", body: { tasks } });
+      await this.fetchTasks();
+    },
+
+    async syncTasks() {
+      await $fetch("/api/sync", { method: "post" });
+    },
+  },
+  getters: {
+    projects: (state) => {
+      return state.tasks
+        .map((task) => task.project)
+        .filter((p) => p !== undefined) as string[];
+    },
+    tags: (state) =>
+      state.tasks.reduce((tags: string[], task) => {
+        return task.tags ? tags.concat(task.tags) : tags;
+      }, []),
+  },
+});
+
+export const useSettingsStore = defineStore("settings", {
+  state: () => ({
     snackbar: false,
     notification: {
       color: "",
@@ -17,22 +58,6 @@ export const useState = defineStore("state", {
     hiddenColumns: [] as string[],
   }),
   actions: {
-    // setSettings(settings) {
-    //   state.settings = settings;
-    // },
-
-    // setTasks(state, tasks: Task[]) {
-    //   state.tasks = tasks;
-    // },
-
-    // setHiddenColumns(state, hiddenColumns) {
-    //   state.hiddenColumns = hiddenColumns;
-    // },
-
-    // setSnackbar(state, value) {
-    //   state.snackbar = value;
-    // },
-
     setNotification(notification: typeof this.notification) {
       this.notification = notification;
       // Show notification
@@ -70,40 +95,5 @@ export const useState = defineStore("state", {
         localStorage.setItem("hiddenColumns", JSON.stringify(columns));
       }
     },
-
-    async fetchTasks() {
-      const tasks: Task[] = await $fetch("/api/tasks?hihi=1");
-      this.tasks = tasks;
-    },
-
-    async deleteTasks(tasks: Task[]) {
-      const query = tasks.map((v) => `tasks[]=${v.uuid}`).join("&");
-      console.log(query)
-      $fetch(`/api/tasks?${query}`, {
-        method: "delete",
-      });
-      // Refresh
-      await this.fetchTasks();
-    },
-
-    async updateTasks(tasks: Task[]) {
-      await $fetch("/api/tasks", { method: "put", body: { tasks } });
-      await this.fetchTasks();
-    },
-
-    async syncTasks() {
-      await $fetch("/api/sync", { method: "post" });
-    },
-  },
-  getters: {
-    projects: (state) => {
-      return state.tasks
-        .map((task) => task.project)
-        .filter((p) => p !== undefined) as string[];
-    },
-    tags: (state) =>
-      state.tasks.reduce((tags: string[], task) => {
-        return task.tags ? tags.concat(task.tags) : tags;
-      }, []),
   },
 });
