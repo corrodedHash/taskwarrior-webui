@@ -35,6 +35,6 @@ const showDialog = computed({
 
 const handler = (event: "yes" | "no") => {
   showDialog.value = false;
-  emits(event as 'yes');
+  emits(event as "yes");
 };
 </script>

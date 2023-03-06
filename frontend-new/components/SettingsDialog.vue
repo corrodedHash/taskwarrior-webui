@@ -5,18 +5,18 @@
       <v-card-text>
         <v-form ref="formRef">
           <v-list-item>
-              <v-list-item-title> Dark </v-list-item-title>
-              <v-list-item-subtitle> default theme </v-list-item-subtitle>
+            <v-list-item-title> Dark </v-list-item-title>
+            <v-list-item-subtitle> default theme </v-list-item-subtitle>
             <v-list-item-action>
               <v-checkbox v-model="settings.dark" />
             </v-list-item-action>
           </v-list-item>
 
           <v-list-item>
-              <v-list-item-title> Auto Refresh </v-list-item-title>
-              <v-list-item-subtitle>
-                in minutes (0 means no refresh)
-              </v-list-item-subtitle>
+            <v-list-item-title> Auto Refresh </v-list-item-title>
+            <v-list-item-subtitle>
+              in minutes (0 means no refresh)
+            </v-list-item-subtitle>
             <v-list-item-action>
               <v-text-field
                 v-model="settings.autoRefresh"
@@ -27,21 +27,21 @@
           </v-list-item>
 
           <v-list-item>
-              <v-list-item-title class="pb-1">
-                Auto Sync
-                <v-icon
-                  size="18px"
-                  class="ml-2"
-                  @click="sync"
-                  title="Sync immediately"
-                >
-                  mdi-sync
-                </v-icon>
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                in minutes (0 means no auto sync)<br />
-                run <code>task sync</code> periodically
-              </v-list-item-subtitle>
+            <v-list-item-title class="pb-1">
+              Auto Sync
+              <v-icon
+                size="18px"
+                class="ml-2"
+                @click="sync"
+                title="Sync immediately"
+              >
+                mdi-sync
+              </v-icon>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              in minutes (0 means no auto sync)<br />
+              run <code>task sync</code> periodically
+            </v-list-item-subtitle>
             <v-list-item-action>
               <v-text-field
                 v-model="settings.autoSync"

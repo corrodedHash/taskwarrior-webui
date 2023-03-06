@@ -129,7 +129,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{ (e: "update:modelValue", val: boolean): void }>();
 const settingsStore = useSettingsStore();
-const taskStore = useTaskStore()
+const taskStore = useTaskStore();
 
 const projects = computed(() => taskStore.projects);
 const tags = computed(() => taskStore.tags);

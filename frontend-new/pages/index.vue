@@ -103,7 +103,9 @@ const tasks: ComputedRef<Task[]> = computed(() => {
   if (mode.value === "Tasks") return taskStore.tasks;
 
   if (project.value)
-    return taskStore.tasks.filter((task: Task) => task.project === project.value);
+    return taskStore.tasks.filter(
+      (task: Task) => task.project === project.value
+    );
 
   return [];
 });
