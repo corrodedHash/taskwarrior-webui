@@ -47,6 +47,8 @@ import { useSettingsStore } from "~~/store";
 import { useTheme } from "vuetify";
 const store = useSettingsStore();
 
+console.log("Are we in dev?", process.dev);
+
 store.fetchSettings();
 store.fetchHiddenColumns();
 

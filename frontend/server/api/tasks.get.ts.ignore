@@ -1,6 +1,0 @@
-export default defineEventHandler(async (event) => {
-  const a = await $fetch.raw("http://localhost:3000/tasks", {
-    method: "get",
-  });
-  return a._data
-});

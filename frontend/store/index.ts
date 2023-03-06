@@ -7,7 +7,7 @@ export const useTaskStore = defineStore("tasks", {
   }),
   actions: {
     async fetchTasks() {
-      const tasks: Task[] = await $fetch("/api/tasks?hihi=1");
+      const tasks: Task[] = await $fetch("/api/tasks");
       this.tasks = tasks;
     },
 
