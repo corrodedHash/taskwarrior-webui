@@ -162,7 +162,7 @@
             v-show="status === 'pending'"
             size="20px"
             class="ml-2"
-            @click="completeTasks([item.raw])"
+            @click="completeTasks([item.raw.uuid])"
             title="Done"
           >
             mdi-check
@@ -171,19 +171,24 @@
             v-show="status === 'completed' || status === 'deleted'"
             size="20px"
             class="ml-2"
-            @click="restoreTasks([item.raw])"
+            @click="restoreTasks([item.raw.uuid])"
             title="Restore"
           >
             mdi-restore
           </v-icon>
-          <v-icon class="ml-2" size="20px" @click="editTask(item.raw)" title="Edit">
+          <v-icon
+            class="ml-2"
+            size="20px"
+            @click="editTask(item.raw.uuid)"
+            title="Edit"
+          >
             mdi-pencil
           </v-icon>
           <v-icon
             v-show="status !== 'deleted'"
             class="ml-2"
             size="20px"
-            @click="deleteTasks([item.raw])"
+            @click="deleteTasks([item.raw.uuid])"
             title="Delete"
           >
             mdi-delete
@@ -265,7 +270,7 @@ function linkify(text: string | undefined) {
 
 const props = defineProps<{ tasks: Task[] }>();
 
-const selected = ref([] as Task[]);
+const selected = ref([] as string[]);
 
 const status = ref("pending");
 const allStatus = ["pending", "waiting", "completed", "deleted", "recurring"];
@@ -348,7 +353,8 @@ const editTask = (task: Task) => {
   currentTask.value = _.cloneDeep(task);
 };
 
-const completeTasks = async (tasks: Task[]) => {
+const completeTasks = async (task_ids: string[]) => {
+  const tasks = props.tasks.filter((v) => task_ids.includes(v.uuid as string));
   await store.updateTasks(
     tasks.map((task) => {
       return {
@@ -358,7 +364,7 @@ const completeTasks = async (tasks: Task[]) => {
     })
   );
   selected.value = selected.value.filter(
-    (task) => tasks.findIndex((t) => t.uuid === task.uuid) === -1
+    (task) => tasks.findIndex((t) => t.uuid === task) === -1
   );
   store.setNotification({
     color: "success",
@@ -366,12 +372,14 @@ const completeTasks = async (tasks: Task[]) => {
   });
 };
 
-const deleteTasks = (tasks: Task[]) => {
+const deleteTasks = (task_ids: string[]) => {
+  const tasks = props.tasks.filter((v) => task_ids.includes(v.uuid as string));
+
   confirmation.text = "Are you sure to delete the task(s)?";
   confirmation.handler = async () => {
     await store.deleteTasks(tasks);
     selected.value = selected.value.filter(
-      (task) => tasks.findIndex((t) => t.uuid === task.uuid) === -1
+      (task) => tasks.findIndex((t) => t.uuid === task) === -1
     );
     store.setNotification({
       color: "success",
@@ -381,7 +389,9 @@ const deleteTasks = (tasks: Task[]) => {
   showConfirmationDialog.value = true;
 };
 
-const restoreTasks = (tasks: Task[]) => {
+const restoreTasks = (task_ids: string[]) => {
+  const tasks = props.tasks.filter((v) => task_ids.includes(v.uuid as string));
+
   confirmation.text = "Are you sure to restore the task(s)?";
   confirmation.handler = async () => {
     await store.updateTasks(
@@ -393,7 +403,7 @@ const restoreTasks = (tasks: Task[]) => {
       })
     );
     selected.value = selected.value.filter(
-      (task) => tasks.findIndex((t) => t.uuid === task.uuid) === -1
+      (task) => tasks.findIndex((t) => t.uuid === task) === -1
     );
     store.setNotification({
       color: "success",
