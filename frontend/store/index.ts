@@ -1,106 +1,99 @@
-import { ActionTree, MutationTree, GetterTree } from 'vuex';
-import { Task } from 'taskwarrior-lib';
-import { getAccessorType } from 'typed-vuex';
+import { Task } from "taskwarrior-lib";
+import { defineStore } from "pinia";
 
-export const state = () => ({
-	tasks: [] as Task[],
-	snackbar: false,
-	notification: {
-		color: '',
-		text: ''
-	},
-	settings: {
-		dark: false,
-		autoRefresh: '5', // in minutes
-		autoSync: '0' // in minutes
-	},
-	hiddenColumns: [] as string[]
+export const useTaskStore = defineStore("tasks", {
+  state: () => ({
+    tasks: [] as Task[],
+  }),
+  actions: {
+    async fetchTasks() {
+      const tasks: Task[] = await $fetch("/api/tasks?hihi=1");
+      this.tasks = tasks;
+    },
+
+    async deleteTasks(tasks: Task[]) {
+      const query = tasks.map((v) => `tasks[]=${v.uuid}`).join("&");
+      console.log(query);
+      $fetch(`/api/tasks?${query}`, {
+        method: "delete",
+      });
+      // Refresh
+      await this.fetchTasks();
+    },
+
+    async updateTasks(tasks: Task[]) {
+      await $fetch("/api/tasks", { method: "put", body: { tasks } });
+      await this.fetchTasks();
+    },
+
+    async syncTasks() {
+      await $fetch("/api/sync", { method: "post" });
+    },
+  },
+  getters: {
+    projects: (state) => {
+      return state.tasks
+        .map((task) => task.project)
+        .filter((p) => p !== undefined) as string[];
+    },
+    tags: (state) =>
+      state.tasks.reduce((tags: string[], task) => {
+        return task.tags ? tags.concat(task.tags) : tags;
+      }, []),
+  },
 });
 
-export type RootState = ReturnType<typeof state>;
+export const useSettingsStore = defineStore("settings", {
+  state: () => ({
+    snackbar: false,
+    notification: {
+      color: "",
+      text: "",
+    },
+    settings: {
+      dark: false,
+      autoRefresh: "5", // in minutes
+      autoSync: "0", // in minutes
+    },
+    hiddenColumns: [] as string[],
+  }),
+  actions: {
+    setNotification(notification: typeof this.notification) {
+      this.notification = notification;
+      // Show notification
+      this.snackbar = true;
+    },
 
-export const getters: GetterTree<RootState, RootState> = {
-	projects: state => state.tasks.map(task => task.project).filter(p => p !== undefined),
-	tags: state => state.tasks.reduce((tags: string[], task) => {
-		return task.tags ? tags.concat(task.tags) : tags;
-	}, [])
-};
+    fetchSettings() {
+      if (process.client) {
+        const settings = localStorage.getItem("settings");
+        if (settings) {
+          this.settings = JSON.parse(settings);
+        }
+      }
+    },
 
-export const mutations: MutationTree<RootState> = {
-	setSettings(state, settings) {
-		state.settings = settings;
-	},
+    updateSettings(settings: typeof this.settings) {
+      this.settings = settings;
+      if (process.client) {
+        localStorage.setItem("settings", JSON.stringify(settings));
+      }
+    },
 
-	setTasks(state, tasks: Task[]) {
-		state.tasks = tasks;
-	},
+    fetchHiddenColumns() {
+      if (process.client) {
+        const columns = localStorage.getItem("hiddenColumns");
+        if (columns) {
+          this.hiddenColumns = JSON.parse(columns);
+        }
+      }
+    },
 
-	setHiddenColumns(state, hiddenColumns) {
-		state.hiddenColumns = hiddenColumns
-	},
-
-	setNotification(state, notification) {
-		state.notification = notification;
-		// Show notification
-		state.snackbar = true;
-	},
-
-	setSnackbar(state, value) {
-		state.snackbar = value;
-	}
-};
-
-export const actions: ActionTree<RootState, RootState> = {
-	fetchSettings(context) {
-		const settings = localStorage.getItem('settings');
-		if (settings) {
-			context.commit('setSettings', JSON.parse(settings));
-		}
-	},
-
-	updateSettings(context, settings) {
-		context.commit('setSettings', settings);
-		localStorage.setItem('settings', JSON.stringify(settings));
-	},
-
-	fetchHiddenColumns(context) {
-		const columns = localStorage.getItem('hiddenColumns');
-		if (columns) {
-			context.commit('setHiddenColumns', JSON.parse(columns));
-		}
-	},
-
-	updateHiddenColumns(context, columns) {
-		context.commit('setHiddenColumns', columns);
-		localStorage.setItem('hiddenColumns', JSON.stringify(columns));
-	},
-
-	async fetchTasks(context) {
-		const tasks: Task[] = await this.$axios.$get('/api/tasks');
-		context.commit('setTasks', tasks);
-	},
-
-	async deleteTasks(context, tasks: Task[]) {
-		await this.$axios.$delete('/api/tasks', {
-			params: { tasks: tasks.map(task => task.uuid) }
-		});
-		// Refresh
-		await context.dispatch('fetchTasks');
-	},
-
-	async updateTasks(context, tasks: Task[]) {
-		await this.$axios.$put('/api/tasks', { tasks });
-		// Refresh
-		await context.dispatch('fetchTasks');
-	},
-
-	async syncTasks(_context) {
-		await this.$axios.$post('/api/sync');
-	}
-};
-
-export const accessorType = getAccessorType({
-	state,
-	mutations,
-	actions
+    updateHiddenColumns(columns: typeof this.hiddenColumns) {
+      this.hiddenColumns = columns;
+      if (process.client) {
+        localStorage.setItem("hiddenColumns", JSON.stringify(columns));
+      }
+    },
+  },
 });

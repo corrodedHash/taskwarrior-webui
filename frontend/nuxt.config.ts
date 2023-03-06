@@ -15,19 +15,5 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify"],
   },
-  ssr: false,
-  modules: [
-    // ...
-    "@pinia/nuxt",
-  ],
-  //   proxy: {
-  //     // Backend
-  //     "/api": {
-  //       target: "http://localhost:3000/",
-  //       changeOrigin: true,
-  //       pathRewrite: {
-  //         "/api": "",
-  //       },
-  //     },
-  //   },
+  modules: ["@pinia/nuxt"],
 });

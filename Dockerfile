@@ -15,12 +15,12 @@ ENV TASKRC="/.taskrc"
 ENV TASKDATA="/.task"
 
 # Fix npm build
-ENV NODE_OPTIONS="--openssl-legacy-provider"
+# ENV NODE_OPTIONS="--openssl-legacy-provider"
 
 # Frontend
 RUN cd /src/frontend && npm install \
-	&& npm run build && npm run export \
-	&& cp -r /src/frontend/dist /static \
+	&& npm run generate \
+	&& cp -r /src/frontend/.output/public /static \
 	&& rm -r /src/frontend
 
 # Backend
